@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title> 
-    <script type="module" src= "./index.js"></script>
+    <title>Valoraciones de episodios</title>
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    
-    <input  type="text" class="taskInput" >
-    <button type="button" class="taskButton">Add</button>
 
-    <ul id="users">
+<div class="content">
+  <form class="search" role="search">
+    <div class="search-box">
+      <input type="text" name="query" placeholder="Nombre o ID de la serie" autocomplete="off" required
+             role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestions">
+    </div>
+    <button type="submit">Buscar</button>
+    <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
+  </form>
+  <p class="error" hidden></p>
 
-        </ul>
+  <header></header>
+  <article class="episodes"></article>
+</div>
+
+<script type="module" src="./index.js"></script>
 
 </body>
 </html>

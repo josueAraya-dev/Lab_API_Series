@@ -1,48 +1,31 @@
-console.log("Hello world!");
+import { DEFAULT_ID, findShowId, getShowData, getEpisodeList } from "./modules/tvmaze.js";
+import { renderShow } from "./modules/render.js";
+import { setupSearch } from "./modules/search.js";
 
-import data from './data.json';
-import modul from './modules/modul.js';
-import {Hello} from './modules/modul.js';
+const $form = document.querySelector(".search");
+const $error = document.querySelector(".error");
 
+let lastLoad = 0;
 
-//console.log(data.users.filter((user) => user.age >= 29));
+// Busca la serie (por nombre o ID) y la pinta en el DOM
+const loadShow = async (query) => {
+  const load = ++lastLoad;
+  $error.hidden = true;
 
-console.log(modul()); //exportacion por defecto 
-console.log(modul.Hello); //exportacion nombrada
+  try {
+    const id = await findShowId(String(query));
+    const show = await getShowData(id);         // { name, rating, image }
+    const seasons = await getEpisodeList(id);   // { 1: [ { number, season, rating }, ... ], 2: ... }
 
-const userList = document.querySelector('#users');
-const taskInput = document.querySelector('.taskInput');
-const taskButton = document.querySelector('.taskButton');
+    // Si mientras tanto se buscó otra serie, no se pinta esta
+    if (load !== lastLoad) return;
+    renderShow(show, seasons);
+  } catch (error) {
+    if (load !== lastLoad) return;
+    $error.textContent = error.message;
+    $error.hidden = false;
+  }
+};
 
-taskButton.addEventListener('click', (e) => {
-
-    console.log(taskInput.value);
-
-data.users.push({
-
-    name: taskInput.value,
-    age: 25
-    
-});
-
-//mostrar los usuarios actualizados
-mostrarUsuarios();
-
-//limpiar el campo de entrada
-taskInput.value = '';
-});
-
-mostrarUsuarios(); //llamamos a la funcion para mostrar los usuarios
-
-
-function mostrarUsuarios() {
-
-userList.innerHTML = '';
-
-//mostrar los usuarios en la lista
-data.users.forEach((user) => {
-
-    console.log(user.name)
-    userList.insertAdjacentHTML('beforeend', `<li>${user.name}</li>`);
-
-}) };
+setupSearch($form, loadShow);
+loadShow(DEFAULT_ID);
